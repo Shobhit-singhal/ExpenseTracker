@@ -3,7 +3,7 @@ import { FaRegMoon } from "react-icons/fa";
 
 const Navbar = () => {
     return (
-        <div className="flex justify-between items-center h-12 px-4">
+        <div className="flex justify-between items-center h-12 px-4 max-w-[900px] mx-auto">
             <ul className="flex gap-3 items-center text-sm text-[#565656] cursor-pointer">
                 <li className="text-xl text-[#E7BA53] font-bold tracking-wide">
                     BudgetTracker
