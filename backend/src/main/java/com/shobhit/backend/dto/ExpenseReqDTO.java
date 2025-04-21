@@ -1,6 +1,10 @@
-package com.shobhit.backend.model;
+package com.shobhit.backend.dto;
 
+import com.shobhit.backend.model.ExpenseType;
+import com.shobhit.backend.model.User;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,26 +14,16 @@ import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
 
-@Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Expense {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-    @Column(nullable = false)
+public class ExpenseReqDTO {
     @Positive(message = "Amount must be positive")
     private double amt;
-    @Column(nullable = false)
+    @NotBlank(message = "Category must not be blank")
     private String category;
-    @CreatedDate
-    private LocalDateTime dateTime;
-    @Enumerated(EnumType.STRING)
+    @NotNull(message = "Expense type is required")
     private ExpenseType expenseType;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
 }
