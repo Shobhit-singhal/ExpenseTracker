@@ -9,6 +9,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -17,8 +19,12 @@ public class ExpenseController {
     @Autowired
     private ExpenseService expenseService;
     @GetMapping
-    public List<ExpenseResDTO> getAllExpense(Authentication authentication){
-        return expenseService.getALlExpense(authentication.getName());
+    public List<ExpenseResDTO> getAllExpense(Authentication authentication
+            , @RequestParam(required = false) String expenseType
+            , @RequestParam(required = false) String category
+            , @RequestParam(required = false) LocalDate startDate
+            , @RequestParam(required = false) LocalDate endDate){
+        return expenseService.getALlExpense(authentication.getName(),expenseType,category,startDate,endDate);
     }
     @PostMapping
     public ExpenseResDTO addExpense(Authentication authentication, @Valid @RequestBody ExpenseReqDTO expenseReqDTO){
@@ -37,5 +43,12 @@ public class ExpenseController {
     public ExpenseResDTO updateExpense(Authentication authentication, @PathVariable long id, @Valid @RequestBody ExpenseReqDTO expenseReqDTO){
         return expenseService.updateExpense(authentication.getName(),id,expenseReqDTO);
     }
+
+//    @GetMapping("/id")
+//    public String test(Authentication authentication,@RequestParam String para1,@RequestParam(required = false) String para2){
+//        System.out.println("hi");
+//        System.out.println(para1+" "+para2);
+//        return para1+" "+para2;
+//    }
 
 }
