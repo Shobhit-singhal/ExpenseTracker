@@ -21,6 +21,8 @@ public class UserService {
     private PasswordEncoder encoder;
     @Autowired
     private AuthenticationManager manager;
+    @Autowired
+    private JwtService jwtService;
     public User getUserByUsername(String username){
         return userRepo.findByUsername(username)
                 .orElseThrow(()->new UsernameNotFoundException("No user with username: "+username));
@@ -37,6 +39,6 @@ public class UserService {
         Authentication authentication=manager.authenticate(
                 new UsernamePasswordAuthenticationToken(user.getUsername(),user.getPassword())
         );
-        return "token";
+        return jwtService.generateToken(user.getUsername());
     }
 }
