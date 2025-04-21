@@ -1,0 +1,15 @@
+@import "tailwindcss";
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+  }
+  html,body{
+    height: 100%;
+    width: 100%;
+    background-color: rgba(20, 16, 16, 0.941);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+}
