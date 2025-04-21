@@ -1,5 +1,6 @@
 import React from "react";
 import OverviewCard from "./OverviewCard";
+import OverviewByCategory from "./OverviewByCategory";
 
 const Overview = () => {
     return (
@@ -18,6 +19,10 @@ const Overview = () => {
                 <OverviewCard />
                 <OverviewCard />
                 <OverviewCard />
+            </div>
+            <div className="mt-2 flex flex-col md:flex-row gap-2 ">
+                <OverviewByCategory />
+                <OverviewByCategory />
             </div>
         </div>
     );
