@@ -2,6 +2,7 @@ package com.shobhit.backend.service;
 
 import com.shobhit.backend.dto.ExpenseReqDTO;
 import com.shobhit.backend.dto.ExpenseResDTO;
+import com.shobhit.backend.dto.FilterExpenseResDTO;
 import com.shobhit.backend.model.Expense;
 import com.shobhit.backend.model.ExpenseType;
 import com.shobhit.backend.model.User;
@@ -12,10 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
+import java.lang.management.ManagementPermission;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,7 +43,7 @@ public class ExpenseService {
                 .amt(expenseReqDTO.getAmt())
                 .build();
     }
-    public List<ExpenseResDTO> getALlExpense(String name,
+    public FilterExpenseResDTO getALlExpense(String name,
                                              String expenseType,
                                              String category,
                                              LocalDate startDate,
@@ -59,7 +60,22 @@ public class ExpenseService {
                     endDate.plusDays(1).atStartOfDay();
         }
         List<Expense> expenses= expenseRepo.filterExpense(name,type,category,start,end);
-        return expenses.stream().map(expense->convExpense(expense)).collect(Collectors.toList());
+        List<ExpenseResDTO> newEx= expenses.stream()
+                .map(expense->convExpense(expense))
+                .collect(Collectors.toList());
+        double total=newEx.stream().mapToDouble(expense->expense.getAmt()).sum();
+
+        Map<String,Double> categoryTotal=new HashMap<>();
+        for(ExpenseResDTO expense:newEx){
+            categoryTotal.merge(expense.getCategory().toUpperCase(),
+                    expense.getAmt(),
+                    (oldVal, newVal) -> oldVal + newVal);
+        }
+        return FilterExpenseResDTO.builder()
+                .expenses(newEx)
+                .total(total)
+                .categoryTotal(categoryTotal)
+                .build();
     }
     public Expense getById(long id){
         return expenseRepo.findById(id).orElseThrow(()->new EntityNotFoundException("Entity Not Found with id: "+id));
@@ -98,5 +114,32 @@ public class ExpenseService {
         expense.setExpenseType(expenseReqDTO.getExpenseType());
         Expense saved = expenseRepo.save(expense);
         return convExpense(saved);
+    }
+
+    public Map<String, Double> getExpenseMonthly(String name, int year, String expenseType) {
+        Map<String,Double> monthly = new LinkedHashMap<>();
+        ExpenseType type=ExpenseType.valueOf(expenseType.toUpperCase());
+        for(int month=1;month<=12;month++){
+            Double total=expenseRepo.getMonthlyTotal(name,year,month,type);
+            monthly.put(getMonthName(month),total);
+        }
+        return monthly;
+    }
+    private String getMonthName(int month) {
+        return switch (month) {
+            case 1 -> "January";
+            case 2 -> "February";
+            case 3 -> "March";
+            case 4 -> "April";
+            case 5 -> "May";
+            case 6 -> "June";
+            case 7 -> "July";
+            case 8 -> "August";
+            case 9 -> "September";
+            case 10 -> "October";
+            case 11 -> "November";
+            case 12 -> "December";
+            default -> "";
+        };
     }
 }

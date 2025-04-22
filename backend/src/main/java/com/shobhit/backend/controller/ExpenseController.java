@@ -2,6 +2,7 @@ package com.shobhit.backend.controller;
 
 import com.shobhit.backend.dto.ExpenseReqDTO;
 import com.shobhit.backend.dto.ExpenseResDTO;
+import com.shobhit.backend.dto.FilterExpenseResDTO;
 import com.shobhit.backend.service.ExpenseService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/expense")
@@ -19,7 +21,7 @@ public class ExpenseController {
     @Autowired
     private ExpenseService expenseService;
     @GetMapping
-    public List<ExpenseResDTO> getAllExpense(Authentication authentication
+    public FilterExpenseResDTO getAllExpense(Authentication authentication
             , @RequestParam(required = false) String expenseType
             , @RequestParam(required = false) String category
             , @RequestParam(required = false) LocalDate startDate
@@ -44,6 +46,11 @@ public class ExpenseController {
         return expenseService.updateExpense(authentication.getName(),id,expenseReqDTO);
     }
 
-
+    @GetMapping("/monthly")
+    public Map<String,Double> getExpenseMonthly(Authentication authentication
+            ,@RequestParam int year
+            ,@RequestParam String expenseType){
+        return expenseService.getExpenseMonthly(authentication.getName(),year,expenseType);
+    }
 
 }
