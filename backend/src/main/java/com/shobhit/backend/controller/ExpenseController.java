@@ -44,11 +44,6 @@ public class ExpenseController {
         return expenseService.updateExpense(authentication.getName(),id,expenseReqDTO);
     }
 
-//    @GetMapping("/id")
-//    public String test(Authentication authentication,@RequestParam String para1,@RequestParam(required = false) String para2){
-//        System.out.println("hi");
-//        System.out.println(para1+" "+para2);
-//        return para1+" "+para2;
-//    }
+
 
 }

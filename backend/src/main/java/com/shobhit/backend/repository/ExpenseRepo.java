@@ -5,23 +5,31 @@ import com.shobhit.backend.model.ExpenseType;
 import com.shobhit.backend.model.User;
 import org.hibernate.sql.ast.tree.expression.JdbcParameter;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface ExpenseRepo extends JpaRepository<Expense,Long> {
-    Optional<List<Expense>> findByIdAndUser(Long id, User user);
-    List<Expense> findByUser_UsernameAndExpenseType(String username, ExpenseType expenseType);
-    List<Expense> findByUser_UsernameAndCategory(String username,String category);
-    List<Expense> findByUser_UsernameAndCategoryAndExpenseType(String username,String category, ExpenseType expenseType);
-    List<Expense> findByUser_UsernameAndDateTimeBetween(String username, LocalDateTime start, LocalDateTime end);
-    List<Expense> findByUser_UsernameAndCategoryAndDateTimeBetween(String username,String category,LocalDateTime start,LocalDateTime end);
-    List<Expense> findByUser_UsernameAndExpenseTypeAndDateTimeBetween(String username, ExpenseType expenseType, LocalDateTime start, LocalDateTime end);
-    List<Expense> findByUser_UsernameAndCategoryAndExpenseTypeAndDateTimeBetween(
-            String username, String category, ExpenseType expenseType, LocalDateTime start, LocalDateTime end
-    );
 
+
+    @Query("""
+            select e from Expense e
+            where e.user.username=:username
+            AND (:type is NULL or e.expenseType=:type)
+            AND (:category is NULL or e.category=:category)
+            AND (:start is null or e.dateTime>=:start)
+            AND (:end is null or e.dateTime<:end)
+    """)
+
+    List<Expense> filterExpense(@Param("username") String username
+            , @Param("type") ExpenseType expenseType
+            , @Param("category") String category
+            , @Param("start")LocalDateTime start
+            ,@Param("end") LocalDateTime end);
 }

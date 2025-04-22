@@ -16,6 +16,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ExpenseService {
@@ -46,46 +47,19 @@ public class ExpenseService {
                                              String category,
                                              LocalDate startDate,
                                              LocalDate endDate) {
-        List<Expense> expenses;
         List<ExpenseResDTO> retExpenses=new ArrayList<>();
-        ExpenseType type=null;
+        ExpenseType type=expenseType==null?null:ExpenseType.valueOf(expenseType.toUpperCase());
         LocalDateTime start=null,end=null;
-
-
-        if(expenseType!=null){
-            type=ExpenseType.valueOf(expenseType.toUpperCase());
+        if(startDate!=null){
+            start=startDate.atStartOfDay();
+            end=(endDate==null)
+                    ?
+                    LocalDate.now().plusDays(1).atStartOfDay()
+                    :
+                    endDate.plusDays(1).atStartOfDay();
         }
-        if (startDate != null) {
-            start = startDate.atStartOfDay();
-            if (endDate != null) {
-                end = endDate.plusDays(1).atStartOfDay(); // inclusive end
-            } else {
-                end = LocalDate.now().plusDays(1).atStartOfDay(); // default to today
-            }
-        }
-
-        if (type == null && category == null && start == null) {
-            User user = userService.getUserByUsername(name);
-            expenses = user.getExpenses();
-        } else if (type != null && category == null && start == null) {
-            expenses = expenseRepo.findByUser_UsernameAndExpenseType(name, type);
-        } else if (type == null && category != null && start == null) {
-            expenses = expenseRepo.findByUser_UsernameAndCategory(name, category);
-        } else if (type != null && category != null && start == null) {
-            expenses = expenseRepo.findByUser_UsernameAndCategoryAndExpenseType(name, category, type);
-        } else if (type == null && category == null) {
-            expenses = expenseRepo.findByUser_UsernameAndDateTimeBetween(name, start, end);
-        } else if (type == null) {
-            expenses = expenseRepo.findByUser_UsernameAndCategoryAndDateTimeBetween(name, category, start, end);
-        } else if (category == null) {
-            expenses = expenseRepo.findByUser_UsernameAndExpenseTypeAndDateTimeBetween(name, type, start, end);
-        } else {
-            expenses = expenseRepo.findByUser_UsernameAndCategoryAndExpenseTypeAndDateTimeBetween(name, category, type, start, end);
-        }
-        for(Expense expense:expenses){
-            retExpenses.add(convExpense(expense));
-        }
-        return retExpenses;
+        List<Expense> expenses= expenseRepo.filterExpense(name,type,category,start,end);
+        return expenses.stream().map(expense->convExpense(expense)).collect(Collectors.toList());
     }
     public Expense getById(long id){
         return expenseRepo.findById(id).orElseThrow(()->new EntityNotFoundException("Entity Not Found with id: "+id));
