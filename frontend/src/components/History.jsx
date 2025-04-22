@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import {
     BarChart,
     Bar,
@@ -9,8 +9,14 @@ import {
     Legend,
     ResponsiveContainer,
 } from "recharts";
+import { StatsProvider } from "../context/StatsContext";
 
 const History = () => {
+    const { expense, income } = useContext(StatsProvider);
+    useEffect(() => {
+        console.log(income, " ", expense);
+    }, []);
+
     const monthlyData = [
         { month: "Jan", income: 3000, expense: 1200 },
         { month: "Feb", income: 2800, expense: 1500 },
