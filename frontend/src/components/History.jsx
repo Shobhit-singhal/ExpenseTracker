@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
     BarChart,
     Bar,
@@ -9,27 +9,64 @@ import {
     Legend,
     ResponsiveContainer,
 } from "recharts";
+import privateAxios from "../axios/PrivateAxios";
 import { StatsProvider } from "../context/StatsContext";
 
 const History = () => {
-    const { expense, income } = useContext(StatsProvider);
-    useEffect(() => {
-        console.log(income, " ", expense);
-    }, []);
+    // const [year, setYear] = useState(2025);
+    const { year, setYear } = useContext(StatsProvider);
+    const { incomeStats, expenseStats } = useContext(StatsProvider);
+    const newIncome = Object.entries(incomeStats).map(([month, income]) => ({
+        month,
+        income,
+    }));
+    const newExpense = Object.entries(expenseStats).map(([month, expense]) => ({
+        month,
+        expense,
+    }));
 
-    const monthlyData = [
-        { month: "Jan", income: 3000, expense: 1200 },
-        { month: "Feb", income: 2800, expense: 1500 },
-        { month: "Mar", income: 3200, expense: 1000 },
-    ];
+    function mergeIncomeExpense(incomes, expenses) {
+        const merged = new Map();
+
+        incomes.forEach(({ month, income }) => {
+            if (!merged.has(month)) {
+                merged.set(month, { month, income: 0, expense: 0 });
+            }
+            merged.get(month).income = income;
+        });
+
+        expenses.forEach(({ month, expense }) => {
+            if (!merged.has(month)) {
+                merged.set(month, { month, income: 0, expense: 0 });
+            }
+            merged.get(month).expense = expense;
+        });
+
+        return Array.from(merged.values()).sort((a, b) => a.month - b.month);
+    }
+    const summary = mergeIncomeExpense(newIncome, newExpense);
+
     return (
         <div className="max-w-[900px] px-4 mx-auto mt-5">
-            <h2 className="text-xl font-bold leading-loose tracking-wide">
-                History
-            </h2>
+            <div className="flex justify-between">
+                <h2 className="text-xl font-bold leading-loose tracking-wide">
+                    History
+                </h2>
+                <select
+                    name="year"
+                    id="year"
+                    className="bg-black"
+                    value={year}
+                    onChange={(e) => setYear(e.target.value)}
+                >
+                    <option value={2025}>2025</option>
+                    <option value={2024}>2024</option>
+                    <option value={2023}>2023</option>
+                </select>
+            </div>
             <div className="h-64 w-full mt-2">
                 <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={monthlyData}>
+                    <BarChart data={summary}>
                         <XAxis dataKey="month" />
                         <YAxis />
                         <Tooltip />

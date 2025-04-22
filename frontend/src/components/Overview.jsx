@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import OverviewCard from "./OverviewCard";
 import OverviewByCategory from "./OverviewByCategory";
 import { StatsProvider } from "../context/StatsContext";
@@ -6,6 +6,7 @@ import { StatsProvider } from "../context/StatsContext";
 const Overview = () => {
     const { loadingIncome, loadingExpense, income, expense } =
         useContext(StatsProvider);
+    const [showAll, setShowAll] = useState(false);
 
     return (
         <div className="max-w-[900px] px-4 mx-auto mt-5">
@@ -39,6 +40,8 @@ const Overview = () => {
                         title="Income"
                         data={income.categoryTotal}
                         total={income.total}
+                        showAll={showAll}
+                        setShowAll={setShowAll}
                     />
                 )}
                 {!loadingExpense && (
@@ -46,6 +49,8 @@ const Overview = () => {
                         title="Expense"
                         data={expense.categoryTotal}
                         total={expense.total}
+                        showAll={showAll}
+                        setShowAll={setShowAll}
                     />
                 )}
             </div>

@@ -3,8 +3,7 @@ import ProgressBar from "@ramonak/react-progress-bar";
 import IndiProgress from "./IndiProgress";
 import { StatsProvider } from "../context/StatsContext";
 
-const OverviewByCategory = ({ title, data, total }) => {
-    const [showAll, setShowAll] = useState(false);
+const OverviewByCategory = ({ title, data, total ,showAll,setShowAll }) => {
     const sortedEntries = Object.entries(data)
         .map(([category, amt]) => ({
             category,

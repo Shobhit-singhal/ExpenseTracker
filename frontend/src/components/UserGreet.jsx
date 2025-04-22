@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import privateAxios from "../axios/PrivateAxios";
+import { useNavigate } from "react-router-dom";
 
-const UserGreet = () => {
+const UserGreet = ({ isHome = false }) => {
     const [name, setName] = useState("Guest");
+    const navigate = useNavigate();
     useEffect(() => {
         const getName = async () => {
             try {
@@ -14,6 +16,10 @@ const UserGreet = () => {
         };
         getName();
     }, []);
+    const handleClick = (e) => {
+        if (isHome) navigate("/create");
+        else navigate("/");
+    };
 
     return (
         <div className="h-24 bg-[#08080A] border-y-1 border-gray-50/10">
@@ -22,11 +28,11 @@ const UserGreet = () => {
                     Hello, {name}👋
                 </p>
                 <div className="flex gap-3">
-                    <button className="bg-green-400/20 px-4 py-1 rounded-md border-1 border-green-400 cursor-pointer text-sm">
-                        New Income
-                    </button>
-                    <button className="bg-red-400/20 px-4 py-1 rounded-md border-1 border-red-400 cursor-pointer text-sm">
-                        New Expense
+                    <button
+                        className="bg-green-400/20 px-4 py-1 rounded-md border-1 border-green-400 cursor-pointer text-sm"
+                        onClick={handleClick}
+                    >
+                        {isHome ? "Add Expense" : "Back to home"}
                     </button>
                 </div>
             </div>

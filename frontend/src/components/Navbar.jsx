@@ -1,7 +1,9 @@
 import React from "react";
 import { FaRegMoon } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
+    const navigate=useNavigate();
     return (
         <div className="flex justify-between items-center h-12 px-4 max-w-[900px] mx-auto">
             <ul className="flex gap-3 items-center text-sm text-[#565656] cursor-pointer">
