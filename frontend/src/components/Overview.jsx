@@ -4,21 +4,54 @@ import OverviewByCategory from "./OverviewByCategory";
 import { StatsProvider } from "../context/StatsContext";
 
 const Overview = () => {
-    const { loadingIncome, loadingExpense, income, expense } =
-        useContext(StatsProvider);
+    const {
+        loadingIncome,
+        loadingExpense,
+        income,
+        expense,
+        start,
+        setStart,
+        end,
+        setEnd,
+        fetchData,
+    } = useContext(StatsProvider);
     const [showAll, setShowAll] = useState(false);
-
+    const handleSearch = async () => {
+        console.log("searched");
+        await fetchData();
+    };
     return (
         <div className="max-w-[900px] px-4 mx-auto mt-5">
-            <div className="flex justify-between">
+            <div className="flex justify-between items-center">
                 <h1 className="text-xl font-bold tracking-wide">Overview</h1>
-                <select
-                    name="sort"
-                    id="sort"
-                    className="border-gray-50/10 border-1 px-4 cursor-pointer font-medium outline-0"
-                >
-                    <option value="abc"> Apr 1, 2004 - Apr 25, 2004</option>
-                </select>
+                <div className="flex flex-col gap-2 items-end">
+                    <div className="flex gap-2">
+                        <label htmlFor="start">Start: </label>
+                        <input
+                            type="date"
+                            className="border-gray-50/10 border-1 px-4 cursor-pointer font-medium outline-0"
+                            value={start}
+                            id="start"
+                            onChange={(e) => setStart(e.target.value)}
+                        />
+                    </div>
+                    <div className="flex gap-2">
+                        <label htmlFor="end">End: </label>
+                        <input
+                            type="date"
+                            className="border-gray-50/10 border-1 px-4 cursor-pointer font-medium outline-0"
+                            value={end}
+                            id="end"
+                            onChange={(e) => setEnd(e.target.value)}
+                        />
+                    </div>
+                </div>
+                <input
+                    type="button"
+                    value={"Search"}
+                    className="bg-blue-500 rounded-xl h-fit py-1 px-4 text-black font-bold  cursor-pointer"
+                    onClick={handleSearch}
+                />
             </div>
             <div className="flex flex-col gap-3 mt-4 md:flex-row">
                 {!loadingIncome && (
