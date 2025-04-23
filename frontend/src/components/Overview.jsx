@@ -24,7 +24,7 @@ const Overview = () => {
         <div className="max-w-[900px] px-4 mx-auto mt-5">
             <div className="flex justify-between items-center">
                 <h1 className="text-xl font-bold tracking-wide">Overview</h1>
-                <div className="flex flex-col gap-2 items-end">
+                <div className="flex flex-col md:flex-row gap-2 items-end">
                     <div className="flex gap-2">
                         <label htmlFor="start">Start: </label>
                         <input

@@ -1,6 +1,6 @@
 import React from "react";
 import { FaRegMoon } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
     const navigate = useNavigate();
@@ -11,12 +11,15 @@ const Navbar = () => {
     return (
         <div className="flex justify-between items-center h-12 px-4 max-w-[900px] mx-auto">
             <ul className="flex gap-3 items-center text-sm text-[#565656] cursor-pointer">
-                <li className="text-xl text-[#E7BA53] font-bold tracking-wide">
+                <NavLink
+                    to="/"
+                    className="text-xl text-[#E7BA53] font-bold tracking-wide"
+                >
                     BudgetTracker
-                </li>
-                <li>Dashboard</li>
-                <li>Transaction</li>
-                <li>Manage</li>
+                </NavLink>
+                <NavLink to="/">Dashboard</NavLink>
+                <NavLink to="/transaction">Transaction</NavLink>
+                <NavLink to="">Manage</NavLink>
             </ul>
             <div className="flex items-center gap-4">
                 <div className="text-white font-bold">

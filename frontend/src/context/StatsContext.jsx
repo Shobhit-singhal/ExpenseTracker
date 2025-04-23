@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import privateAxios from "../axios/PrivateAxios";
 import publicAxios from "../axios/PublicAxios";
+import { BiCategory } from "react-icons/bi";
 
 export const StatsProvider = createContext();
 
@@ -12,33 +13,10 @@ const StatsContext = ({ children }) => {
     const [expense, setExpense] = useState({});
     const [incomeStats, setIncomeStats] = useState({});
     const [expenseStats, setExpenseStats] = useState({});
-    const [token, setToken] = useState(localStorage.getItem("token"));
-    const [start, setStart] = useState(
-        new Date("2025-01-01").toISOString().slice(0, 10)
+    const [start, setStart] = useState(() =>
+        new Date(new Date().getFullYear(), 0, 1).toISOString().slice(0, 10)
     );
     const [end, setEnd] = useState(new Date().toISOString().slice(0, 10));
-
-    // const fetchStatsData = async () => {
-    //     setLoadingIncome(true);
-    //     setLoadingExpense(true);
-    //     console.log("fetch stas data");
-    //     try {
-    //         const expenseRes = await privateAxios.get("/expense", {
-    //             params: { expenseType: "expense" },
-    //         });
-    //         const incomeRes = await privateAxios.get("/expense", {
-    //             params: { expenseType: "income" },
-    //         });
-
-    //         setExpense(expenseRes.data);
-    //         setIncome(incomeRes.data);
-    //     } catch (Err) {
-    //         console.log(Err);
-    //     } finally {
-    //         setLoadingIncome(false);
-    //         setLoadingExpense(false);
-    //     }
-    // };
 
     const addExpense = async (details) => {
         try {
@@ -71,7 +49,8 @@ const StatsContext = ({ children }) => {
     const login = async (details) => {
         let res = await publicAxios.post("/public/login", details);
         localStorage.setItem("token", res.data);
-        setToken(res.data);
+        await getGraphData(year);
+        await fetchData();
         return res;
     };
     const registerAcc = async (details) => {
@@ -96,7 +75,6 @@ const StatsContext = ({ children }) => {
                     expenseType: "expense",
                 },
             });
-            console.log(incomeRes, expenseRes);
             setIncome(incomeRes.data);
             setExpense(expenseRes.data);
         } catch (err) {
@@ -106,16 +84,41 @@ const StatsContext = ({ children }) => {
             setLoadingExpense(false);
         }
     };
+    const getPieChartData = async () => {
+        try {
+            let expenseRes = await privateAxios.get("/expense", {
+                params: {
+                    expenseType: "expense",
+                },
+            });
+            let incomeRes = await privateAxios.get("/expense", {
+                params: {
+                    expenseType: "income",
+                },
+            });
 
-    useEffect(() => {
-        if (token) {
-            getGraphData(year);
+            return { expense: expenseRes.data, income: incomeRes.data };
+        } catch (err) {
+            console.log(err);
         }
-    }, [year, token]);
+    };
+    const getAllTransaction = async () => {
+        try {
+            let res = await privateAxios.get("/expense");
+            console.log(res.data);
+            return res.data;
+        } catch (err) {
+            console.log(err);
+        }
+    };
+    useEffect(() => {
+        getGraphData(year);
+    }, [year]);
 
     useEffect(() => {
-        if (token) fetchData();
-    }, [token]);
+        fetchData();
+        getAllTransaction();
+    }, []);
     return (
         <StatsProvider.Provider
             value={{
@@ -135,6 +138,8 @@ const StatsContext = ({ children }) => {
                 end,
                 setEnd,
                 fetchData,
+                getPieChartData,
+                getAllTransaction,
             }}
         >
             {children}
