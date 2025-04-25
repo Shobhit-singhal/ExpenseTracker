@@ -6,6 +6,8 @@ const PieChartComp = () => {
     const { getPieChartData, getAllTransaction } = useContext(StatsProvider);
     const [incomeByCategory, setIncomeByCategory] = useState([]);
     const [expenseByCategory, setExpenseByCategory] = useState([]);
+    const [expenseTotal, setExpenseTotal] = useState(0);
+    const [incomeTotal, setIncomeTotal] = useState(0);
 
     const getRandomColor = () => {
         const colors = [
@@ -38,6 +40,8 @@ const PieChartComp = () => {
             setExpenseByCategory(formattedData(data.expense.categoryTotal));
             setIncomeByCategory(formattedData(data.income.categoryTotal));
             console.log(data);
+            setExpenseTotal(data.expense.total);
+            setIncomeTotal(data.income.total);
             let oth = await getAllTransaction();
         })();
     }, []);
@@ -54,7 +58,7 @@ const PieChartComp = () => {
         <div className="w-full max-w-[900px] mx-auto p-4 flex flex-col gap-8 md:flex-row md:justify-between">
             <div className="w-full md:w-1/2 h-80 bg-white rounded-xl shadow-md p-4">
                 <h2 className="text-lg text-black font-semibold text-center mb-2">
-                    Expenses by Category
+                    Expenses by Category ({expenseTotal})
                 </h2>
                 <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
@@ -74,7 +78,7 @@ const PieChartComp = () => {
 
             <div className="w-full md:w-1/2 h-80 bg-white rounded-xl shadow-md p-4">
                 <h2 className="text-lg text-black font-semibold text-center mb-2">
-                    Income by Category
+                    Income by Category ({incomeTotal})
                 </h2>
                 <ResponsiveContainer width="100%" height="100%">
                     <PieChart>

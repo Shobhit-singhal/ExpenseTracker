@@ -23,6 +23,7 @@ const StatsContext = ({ children }) => {
             let res = await privateAxios.post("/expense", details);
             await fetchData();
             await getGraphData(year);
+            await getAllTransaction();
             return res;
         } catch (err) {
             console.log(err);
@@ -51,6 +52,7 @@ const StatsContext = ({ children }) => {
         localStorage.setItem("token", res.data);
         await getGraphData(year);
         await fetchData();
+        await getAllTransaction();
         return res;
     };
     const registerAcc = async (details) => {
@@ -111,6 +113,15 @@ const StatsContext = ({ children }) => {
             console.log(err);
         }
     };
+    const handleDelete = async (id) => {
+        try {
+            let res = await privateAxios.delete(`/expense/${id}`);
+            await fetchData();
+            return res;
+        } catch (err) {
+            console.log(err);
+        }
+    };
     useEffect(() => {
         getGraphData(year);
     }, [year]);
@@ -140,6 +151,7 @@ const StatsContext = ({ children }) => {
                 fetchData,
                 getPieChartData,
                 getAllTransaction,
+                handleDelete,
             }}
         >
             {children}
