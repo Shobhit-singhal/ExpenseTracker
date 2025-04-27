@@ -1,92 +1,190 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import privateAxios from "../axios/PrivateAxios";
 import publicAxios from "../axios/PublicAxios";
-import { BiCategory } from "react-icons/bi";
 
 export const StatsProvider = createContext();
 
 const StatsContext = ({ children }) => {
-    const [loadingIncome, setLoadingIncome] = useState(true);
-    const [loadingExpense, setLoadingExpense] = useState(true);
-    const [year, setYear] = useState(2025);
-    const [income, setIncome] = useState({});
-    const [expense, setExpense] = useState({});
-    const [incomeStats, setIncomeStats] = useState({});
-    const [expenseStats, setExpenseStats] = useState({});
-    const [start, setStart] = useState(() =>
-        new Date(new Date().getFullYear(), 0, 1).toISOString().slice(0, 10)
-    );
-    const [end, setEnd] = useState(new Date().toISOString().slice(0, 10));
-
+    const [addExpenseRes, setAddExpenseRes] = useState({
+        loading: false,
+        data: null,
+        error: null,
+    });
+    const [incomeGraphData, setIncomeGraphData] = useState({
+        loading: false,
+        data: null,
+        error: null,
+    });
+    const [expenseGraphData, setExpenseGraphData] = useState({
+        loading: false,
+        data: null,
+        error: null,
+    });
+    const [loginData, setLoginData] = useState({
+        loading: false,
+        data: null,
+        error: null,
+    });
+    const [registerData, setRegisterData] = useState({
+        loading: false,
+        data: null,
+        error: null,
+    });
+    const [incomeDataFromDate, setIncomeDataFromDate] = useState({
+        loading: false,
+        data: null,
+        error: null,
+    });
+    const [expenseDataFromDate, setExpenseDataFromDate] = useState({
+        loading: false,
+        data: null,
+        error: null,
+    });
+    const [incomePieChartData, setIncomePieChartData] = useState({
+        loading: false,
+        data: null,
+        error: null,
+    });
+    const [expensePieChartData, setExpensePieChartData] = useState({
+        loading: false,
+        data: null,
+        error: null,
+    });
+    const [allTransactionData, setAllTransactionData] = useState({
+        loading: false,
+        data: null,
+        error: null,
+    });
+    const [logoutData, setLogoutData] = useState({
+        loading: false,
+        data: null,
+        error: null,
+    });
     const addExpense = async (details) => {
+        setAddExpenseRes({ loading: true, data: null, error: null });
         try {
             let res = await privateAxios.post("/expense", details);
-            await fetchData();
-            await getGraphData(year);
-            await getAllTransaction();
-            return res;
+            setAddExpenseRes({ loading: false, data: res.data, error: null });
         } catch (err) {
-            console.log(err);
+            setAddExpenseRes({
+                loading: false,
+                data: null,
+                error: err.message || "Something went wrong",
+            });
         }
     };
-    let getGraphData = async (year) => {
-        console.log("fetch grpah data");
-        let incomeRes = await privateAxios.get("/expense/monthly", {
-            params: {
-                year,
-                expenseType: "income",
-            },
-        });
-        let expenseRes = await privateAxios.get("/expense/monthly", {
-            params: {
-                year,
-                expenseType: "expense",
-            },
-        });
-        setIncomeStats(incomeRes.data);
-        setExpenseStats(expenseRes.data);
+    let fetchGraphData = async (year) => {
+        setIncomeGraphData({ loading: true, data: null, error: null });
+        setExpenseGraphData({ loading: true, data: null, error: null });
+        try {
+            console.log("fetch grpah data");
+            let incomeRes = await privateAxios.get("/expense/monthly", {
+                params: {
+                    year,
+                    expenseType: "income",
+                },
+            });
+            let expenseRes = await privateAxios.get("/expense/monthly", {
+                params: {
+                    year,
+                    expenseType: "expense",
+                },
+            });
+            setIncomeGraphData({
+                loading: false,
+                data: incomeRes.data,
+                error: null,
+            });
+            setExpenseGraphData({
+                loading: false,
+                data: expenseRes.data,
+                error: null,
+            });
+        } catch (err) {
+            setIncomeGraphData({
+                loading: false,
+                data: null,
+                error: err.message || "Something went wrong",
+            });
+            setExpenseGraphData({
+                loading: false,
+                data: null,
+                error: err.message || "Something went wrong",
+            });
+        }
     };
 
     const login = async (details) => {
-        let res = await publicAxios.post("/public/login", details);
-        localStorage.setItem("token", res.data);
-        await getGraphData(year);
-        await fetchData();
-        await getAllTransaction();
-        return res;
-    };
-    const registerAcc = async (details) => {
-        let req = await publicAxios.post("/public/register", details);
-        console.log(req);
-    };
-    const fetchData = async () => {
-        const startDate = start;
-        const endDate = end;
+        setLoginData({ loading: true, data: null, error: null });
         try {
-            let incomeRes = await privateAxios.get("/expense", {
-                params: {
-                    startDate,
-                    endDate,
-                    expenseType: "income",
-                },
-            });
-            let expenseRes = await privateAxios.get("/expense", {
-                params: {
-                    startDate,
-                    endDate,
-                    expenseType: "expense",
-                },
-            });
-            setIncome(incomeRes.data);
-            setExpense(expenseRes.data);
+            let res = await publicAxios.post("/public/login", details);
+            localStorage.setItem("token", res.data);
+            setLoginData({ loading: false, data: res.data, error: null });
         } catch (err) {
-            console.log(err);
-        } finally {
-            setLoadingIncome(false);
-            setLoadingExpense(false);
+            setLoginData({
+                loading: false,
+                data: null,
+                error: err.message || "Something went wrong",
+            });
         }
     };
-    const getPieChartData = async () => {
+    const registerAcc = async (details) => {
+        setRegisterData({ loading: true, data: null, error: null });
+        try {
+            let req = await publicAxios.post("/public/register", details);
+            setRegisterData({ loading: false, data: res.data, error: null });
+        } catch (err) {
+            setRegisterData({
+                loading: false,
+                data: null,
+                error: err.message || "Something went wrong",
+            });
+        }
+    };
+    const fetchDataFromDate = async (startDate, endDate) => {
+        setIncomeDataFromDate({ loading: true, data: null, error: null });
+        setExpenseDataFromDate({ loading: true, data: null, error: null });
+        try {
+            let incomeRes = await privateAxios.get("/expense", {
+                params: {
+                    startDate,
+                    endDate,
+                    expenseType: "income",
+                },
+            });
+            let expenseRes = await privateAxios.get("/expense", {
+                params: {
+                    startDate,
+                    endDate,
+                    expenseType: "expense",
+                },
+            });
+            setIncomeDataFromDate({
+                loading: false,
+                data: incomeRes.data,
+                error: null,
+            });
+            setExpenseDataFromDate({
+                loading: false,
+                data: expenseRes.data,
+                error: null,
+            });
+        } catch (err) {
+            setIncomeDataFromDate({
+                loading: false,
+                data: null,
+                error: err.message || "Something went wrong",
+            });
+            setExpenseDataFromDate({
+                loading: false,
+                data: null,
+                error: err.message || "Something went wrong",
+            });
+        }
+    };
+    const fetchPieChartData = async () => {
+        setIncomePieChartData({ loading: true, data: null, error: null });
+        setExpensePieChartData({ loading: true, data: null, error: null });
         try {
             let expenseRes = await privateAxios.get("/expense", {
                 params: {
@@ -98,60 +196,85 @@ const StatsContext = ({ children }) => {
                     expenseType: "income",
                 },
             });
-
-            return { expense: expenseRes.data, income: incomeRes.data };
+            setIncomePieChartData({
+                loading: false,
+                data: incomeRes.data,
+                error: null,
+            });
+            setExpensePieChartData({
+                loading: false,
+                data: expenseRes.data,
+                error: null,
+            });
         } catch (err) {
-            console.log(err);
+            setIncomePieChartData({
+                loading: false,
+                data: null,
+                error: err.message || "Something went wrong",
+            });
+            setExpensePieChartData({
+                loading: false,
+                data: null,
+                error: err.message || "Something went wrong",
+            });
         }
     };
     const getAllTransaction = async () => {
+        setAllTransactionData({ loading: true, data: null, error: null });
         try {
             let res = await privateAxios.get("/expense");
-            console.log(res.data);
-            return res.data;
+            setAllTransactionData({
+                loading: false,
+                data: res.data,
+                error: null,
+            });
         } catch (err) {
-            console.log(err);
+            setAllTransactionData({
+                loading: false,
+                data: null,
+                error: err.message || "Something went wrong",
+            });
         }
     };
-    const handleDelete = async (id) => {
+    const logOut = () => {
+        setLogoutData({ loading: true, data: null, error: null });
         try {
-            let res = await privateAxios.delete(`/expense/${id}`);
-            await fetchData();
-            return res;
+            localStorage.removeItem("token");
+            setLogoutData({
+                loading: false,
+                data: "logout successfull",
+                error: null,
+            });
         } catch (err) {
-            console.log(err);
+            setLogoutData({
+                loading: false,
+                data: null,
+                error: err.message || "Something went wrong",
+            });
         }
     };
-    useEffect(() => {
-        getGraphData(year);
-    }, [year]);
-
-    useEffect(() => {
-        fetchData();
-        getAllTransaction();
-    }, []);
     return (
         <StatsProvider.Provider
             value={{
-                loadingIncome,
-                loadingExpense,
-                income,
-                expense,
+                addExpenseRes,
+                incomeGraphData,
+                expenseGraphData,
+                loginData,
+                registerData,
+                incomeDataFromDate,
+                expenseDataFromDate,
+                incomePieChartData,
+                expensePieChartData,
+                allTransactionData,
+                logoutData,
                 addExpense,
-                expenseStats,
-                incomeStats,
-                year,
-                setYear,
+                fetchGraphData,
                 login,
                 registerAcc,
-                start,
-                setStart,
-                end,
-                setEnd,
-                fetchData,
-                getPieChartData,
+                fetchDataFromDate,
+                fetchPieChartData,
                 getAllTransaction,
-                handleDelete,
+                logOut,
             }}
         >
             {children}

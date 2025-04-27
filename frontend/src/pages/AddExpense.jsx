@@ -14,7 +14,9 @@ const AddExpense = () => {
         watch,
         formState: { errors, isSubmitting },
     } = useForm();
-    const { addExpense } = useContext(StatsProvider);
+
+    const { addExpense, addExpenseRes } = useContext(StatsProvider);
+
     const onSubmit = async (details) => {
         let res = await addExpense({
             ...details,

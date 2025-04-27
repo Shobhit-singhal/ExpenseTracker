@@ -4,22 +4,26 @@ import OverviewByCategory from "./OverviewByCategory";
 import { StatsProvider } from "../context/StatsContext";
 
 const Overview = () => {
-    const {
-        loadingIncome,
-        loadingExpense,
-        income,
-        expense,
-        start,
-        setStart,
-        end,
-        setEnd,
-        fetchData,
-    } = useContext(StatsProvider);
+    const [start, setStart] = useState(() =>
+        new Date(new Date().getFullYear(), 0, 1).toISOString().slice(0, 10)
+    );
+    const [end, setEnd] = useState(new Date().toISOString().slice(0, 10));
     const [showAll, setShowAll] = useState(false);
+
+    const { incomeDataFromDate, expenseDataFromDate, fetchDataFromDate } =
+        useContext(StatsProvider);
+
     const handleSearch = async () => {
         console.log("searched");
-        await fetchData();
+        fetchDataFromDate(start, end);
     };
+    useEffect(() => {
+        fetchDataFromDate(start, end);
+    }, []);
+    // useEffect(() => {
+    //     console.log(incomeDataFromDate, " ", expenseDataFromDate);
+    // }, [incomeDataFromDate, expenseDataFromDate]);
+
     return (
         <div className="max-w-[900px] px-4 mx-auto mt-5">
             <div className="flex justify-between items-center">
@@ -54,38 +58,52 @@ const Overview = () => {
                 />
             </div>
             <div className="flex flex-col gap-3 mt-4 md:flex-row">
-                {!loadingIncome && (
-                    <OverviewCard title="Income" amt={income.total} />
-                )}
-                {!loadingExpense && (
-                    <OverviewCard title="Expense" amt={expense.total} />
-                )}
-                {!loadingExpense && !loadingIncome && (
-                    <OverviewCard
-                        title="Saved"
-                        amt={income.total - expense.total}
-                    />
-                )}
+                {!incomeDataFromDate.loading &&
+                    !expenseDataFromDate.loading &&
+                    incomeDataFromDate.data &&
+                    expenseDataFromDate.data && (
+                        <>
+                            <OverviewCard
+                                title="Income"
+                                amt={incomeDataFromDate.data.total}
+                            />
+                            <OverviewCard
+                                title="Expense"
+                                amt={expenseDataFromDate.data.total}
+                            />
+                            <OverviewCard
+                                title="Saved"
+                                amt={
+                                    incomeDataFromDate.data.total -
+                                    expenseDataFromDate.data.total
+                                }
+                            />
+                        </>
+                    )}
             </div>
             <div className="mt-2 flex flex-col md:flex-row gap-2 ">
-                {!loadingIncome && (
-                    <OverviewByCategory
-                        title="Income"
-                        data={income.categoryTotal}
-                        total={income.total}
-                        showAll={showAll}
-                        setShowAll={setShowAll}
-                    />
-                )}
-                {!loadingExpense && (
-                    <OverviewByCategory
-                        title="Expense"
-                        data={expense.categoryTotal}
-                        total={expense.total}
-                        showAll={showAll}
-                        setShowAll={setShowAll}
-                    />
-                )}
+                {!incomeDataFromDate.loading &&
+                    !expenseDataFromDate.loading &&
+                    incomeDataFromDate.data &&
+                    expenseDataFromDate.data && (
+                        <>
+                            <OverviewByCategory
+                                title="Income"
+                                data={incomeDataFromDate.data.categoryTotal}
+                                total={incomeDataFromDate.data.total}
+                                showAll={showAll}
+                                setShowAll={setShowAll}
+                            />
+
+                            <OverviewByCategory
+                                title="Expense"
+                                data={expenseDataFromDate.data.categoryTotal}
+                                total={expenseDataFromDate.data.total}
+                                showAll={showAll}
+                                setShowAll={setShowAll}
+                            />
+                        </>
+                    )}
             </div>
         </div>
     );

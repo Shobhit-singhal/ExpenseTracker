@@ -13,17 +13,22 @@ import privateAxios from "../axios/PrivateAxios";
 import { StatsProvider } from "../context/StatsContext";
 
 const History = () => {
-    // const [year, setYear] = useState(2025);
-    const { year, setYear } = useContext(StatsProvider);
-    const { incomeStats, expenseStats } = useContext(StatsProvider);
-    const newIncome = Object.entries(incomeStats).map(([month, income]) => ({
-        month,
-        income,
-    }));
-    const newExpense = Object.entries(expenseStats).map(([month, expense]) => ({
-        month,
-        expense,
-    }));
+    const [year, setYear] = useState(new Date().getFullYear());
+    const { incomeGraphData, expenseGraphData, fetchGraphData } =
+        useContext(StatsProvider);
+
+    const incomeData = (data) => {
+        return Object.entries(data).map(([month, income]) => ({
+            month,
+            income,
+        }));
+    };
+    const expenseData = (data) => {
+        return Object.entries(data).map(([month, expense]) => ({
+            month,
+            expense,
+        }));
+    };
 
     function mergeIncomeExpense(incomes, expenses) {
         const merged = new Map();
@@ -44,7 +49,22 @@ const History = () => {
 
         return Array.from(merged.values()).sort((a, b) => a.month - b.month);
     }
-    const summary = mergeIncomeExpense(newIncome, newExpense);
+
+    const [summary, setSummary] = useState(null);
+    useEffect(() => {
+        if (incomeGraphData.data && expenseGraphData.data) {
+            setSummary(
+                mergeIncomeExpense(
+                    incomeData(incomeGraphData.data),
+                    expenseData(expenseGraphData.data)
+                )
+            );
+        }
+    }, [incomeGraphData, expenseGraphData]);
+
+    useEffect(() => {
+        fetchGraphData(year);
+    }, [year]);
 
     return (
         <div className="max-w-[900px] px-4 mx-auto mt-5">

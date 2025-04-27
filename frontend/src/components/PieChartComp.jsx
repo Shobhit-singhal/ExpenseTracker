@@ -3,7 +3,7 @@ import { Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 import { StatsProvider } from "../context/StatsContext";
 
 const PieChartComp = () => {
-    const { getPieChartData, getAllTransaction } = useContext(StatsProvider);
+    const { incomePieChartData, getAllTransaction } = useContext(StatsProvider);
     const [incomeByCategory, setIncomeByCategory] = useState([]);
     const [expenseByCategory, setExpenseByCategory] = useState([]);
     const [expenseTotal, setExpenseTotal] = useState(0);

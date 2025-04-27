@@ -13,7 +13,7 @@ const Transaction = () => {
             <Navbar />
             <UserGreet isHome={true} />
             <PieChartComp />
-            <AllTransactions />
+            {/* <AllTransactions /> */}
         </div>
     );
 };
