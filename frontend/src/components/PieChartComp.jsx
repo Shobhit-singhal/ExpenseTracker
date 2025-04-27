@@ -72,7 +72,7 @@ const PieChartComp = () => {
                             <ResponsiveContainer width="100%" height="100%">
                                 <PieChart>
                                     <Pie
-                                        data={incomeData}
+                                        data={expenseData}
                                         dataKey="value"
                                         nameKey="name"
                                         cx="50%"
@@ -92,7 +92,7 @@ const PieChartComp = () => {
                             <ResponsiveContainer width="100%" height="100%">
                                 <PieChart>
                                     <Pie
-                                        data={expenseData}
+                                        data={incomeData}
                                         dataKey="value"
                                         nameKey="name"
                                         cx="50%"

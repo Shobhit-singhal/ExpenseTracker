@@ -60,10 +60,16 @@ const StatsContext = ({ children }) => {
         data: null,
         error: null,
     });
+    const [deleteData, setDeleteData] = useState({
+        loading: false,
+        data: null,
+        error: null,
+    });
     const addExpense = async (details) => {
         setAddExpenseRes({ loading: true, data: null, error: null });
         try {
             let res = await privateAxios.post("/expense", details);
+
             setAddExpenseRes({ loading: false, data: res.data, error: null });
         } catch (err) {
             setAddExpenseRes({
@@ -253,6 +259,21 @@ const StatsContext = ({ children }) => {
             });
         }
     };
+    const onDelete = async (id) => {
+        setDeleteData({ loading: true, data: null, error: null });
+        try {
+            let res = await privateAxios.delete(`/expense/${id}`);
+            await getAllTransaction();
+            await fetchPieChartData();
+            setDeleteData({ loading: false, data: res.data, error: null });
+        } catch (err) {
+            setDeleteData({
+                loading: false,
+                data: null,
+                error: err.message || "Something went wrong",
+            });
+        }
+    };
     return (
         <StatsProvider.Provider
             value={{
@@ -275,6 +296,7 @@ const StatsContext = ({ children }) => {
                 fetchPieChartData,
                 getAllTransaction,
                 logOut,
+                onDelete,
             }}
         >
             {children}

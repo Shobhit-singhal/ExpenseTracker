@@ -3,7 +3,7 @@ import { StatsProvider } from "../context/StatsContext";
 import IndiTrasaction from "./IndiTrasaction";
 
 const AllTransactions = () => {
-    const { getAllTransaction, allTransactionData } = useContext(StatsProvider);
+    const { getAllTransaction, allTransactionData, } = useContext(StatsProvider);
 
     const [expenseTotal, setExpenseTotal] = useState(0);
     const [incomeTotal, setIncomeTotal] = useState(0);
