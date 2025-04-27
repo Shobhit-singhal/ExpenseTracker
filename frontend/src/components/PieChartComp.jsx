@@ -3,12 +3,13 @@ import { Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 import { StatsProvider } from "../context/StatsContext";
 
 const PieChartComp = () => {
-    const { incomePieChartData, getAllTransaction } = useContext(StatsProvider);
-    const [incomeByCategory, setIncomeByCategory] = useState([]);
-    const [expenseByCategory, setExpenseByCategory] = useState([]);
-    const [expenseTotal, setExpenseTotal] = useState(0);
-    const [incomeTotal, setIncomeTotal] = useState(0);
+    const { incomePieChartData, expensePieChartData, fetchPieChartData } =
+        useContext(StatsProvider);
 
+    const [incomeData, setIncomeData] = useState([]);
+    const [expenseData, setExpenseData] = useState([]);
+    const [incomeTotal, setIncomeTotal] = useState(0);
+    const [expenseTotal, setExpenseTotal] = useState(0);
     const getRandomColor = () => {
         const colors = [
             "#8884d8",
@@ -35,16 +36,19 @@ const PieChartComp = () => {
     };
 
     useEffect(() => {
-        (async () => {
-            let data = await getPieChartData();
-            setExpenseByCategory(formattedData(data.expense.categoryTotal));
-            setIncomeByCategory(formattedData(data.income.categoryTotal));
-            console.log(data);
-            setExpenseTotal(data.expense.total);
-            setIncomeTotal(data.income.total);
-            let oth = await getAllTransaction();
-        })();
+        fetchPieChartData();
     }, []);
+    useEffect(() => {
+        console.log(incomePieChartData, " ", expensePieChartData);
+        if (incomePieChartData.data && expensePieChartData.data) {
+            setIncomeData(formattedData(incomePieChartData.data.categoryTotal));
+            setExpenseData(
+                formattedData(expensePieChartData.data.categoryTotal)
+            );
+            setIncomeTotal(incomePieChartData.data.total);
+            setExpenseTotal(expensePieChartData.data.total);
+        }
+    }, [incomePieChartData, expensePieChartData]);
 
     let formattedData = (obj) => {
         return Object.entries(obj).map(([category, total]) => ({
@@ -56,45 +60,52 @@ const PieChartComp = () => {
 
     return (
         <div className="w-full max-w-[900px] mx-auto p-4 flex flex-col gap-8 md:flex-row md:justify-between">
-            <div className="w-full md:w-1/2 h-80 bg-white rounded-xl shadow-md p-4">
-                <h2 className="text-lg text-black font-semibold text-center mb-2">
-                    Expenses by Category ({expenseTotal})
-                </h2>
-                <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                        <Pie
-                            data={expenseByCategory}
-                            dataKey="value"
-                            nameKey="name"
-                            cx="50%"
-                            cy="50%"
-                            outerRadius={100}
-                            fill="#8884d8"
-                        />
-                        <Tooltip content={<CustomTooltip />} />
-                    </PieChart>
-                </ResponsiveContainer>
-            </div>
+            {!incomePieChartData.loading &&
+                !expensePieChartData.loading &&
+                incomePieChartData &&
+                expensePieChartData && (
+                    <>
+                        <div className="w-full md:w-1/2 h-80 bg-white rounded-xl shadow-md p-4">
+                            <h2 className="text-lg text-black font-semibold text-center mb-2">
+                                Expenses by Category ({expenseTotal})
+                            </h2>
+                            <ResponsiveContainer width="100%" height="100%">
+                                <PieChart>
+                                    <Pie
+                                        data={incomeData}
+                                        dataKey="value"
+                                        nameKey="name"
+                                        cx="50%"
+                                        cy="50%"
+                                        outerRadius={100}
+                                        fill="#8884d8"
+                                    />
+                                    <Tooltip content={<CustomTooltip />} />
+                                </PieChart>
+                            </ResponsiveContainer>
+                        </div>
 
-            <div className="w-full md:w-1/2 h-80 bg-white rounded-xl shadow-md p-4">
-                <h2 className="text-lg text-black font-semibold text-center mb-2">
-                    Income by Category ({incomeTotal})
-                </h2>
-                <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                        <Pie
-                            data={incomeByCategory}
-                            dataKey="value"
-                            nameKey="name"
-                            cx="50%"
-                            cy="50%"
-                            outerRadius={100}
-                            fill="#82ca9d"
-                        />
-                        <Tooltip content={<CustomTooltip />} />
-                    </PieChart>
-                </ResponsiveContainer>
-            </div>
+                        <div className="w-full md:w-1/2 h-80 bg-white rounded-xl shadow-md p-4">
+                            <h2 className="text-lg text-black font-semibold text-center mb-2">
+                                Income by Category ({incomeTotal})
+                            </h2>
+                            <ResponsiveContainer width="100%" height="100%">
+                                <PieChart>
+                                    <Pie
+                                        data={expenseData}
+                                        dataKey="value"
+                                        nameKey="name"
+                                        cx="50%"
+                                        cy="50%"
+                                        outerRadius={100}
+                                        fill="#82ca9d"
+                                    />
+                                    <Tooltip content={<CustomTooltip />} />
+                                </PieChart>
+                            </ResponsiveContainer>
+                        </div>
+                    </>
+                )}
         </div>
     );
 };
