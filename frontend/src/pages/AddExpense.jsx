@@ -2,7 +2,6 @@ import React, { useContext } from "react";
 import { useForm } from "react-hook-form";
 import Navbar from "../components/Navbar";
 import UserGreet from "../components/UserGreet";
-import privateAxios from "../axios/PrivateAxios";
 import { useNavigate } from "react-router-dom";
 import { StatsProvider } from "../context/StatsContext";
 
@@ -11,11 +10,10 @@ const AddExpense = () => {
     const {
         register,
         handleSubmit,
-        watch,
         formState: { errors, isSubmitting },
     } = useForm();
 
-    const { addExpense, addExpenseRes } = useContext(StatsProvider);
+    const { addExpense } = useContext(StatsProvider);
 
     const onSubmit = async (details) => {
         let res = await addExpense({
@@ -25,24 +23,28 @@ const AddExpense = () => {
         console.log(res);
         navigate("/");
     };
+
     return (
-        <div className="min-h-screen w-full max-w-[900px] mx-auto">
+        <div className="min-h-screen w-full max-w-4xl mx-auto px-4">
             <Navbar />
             <UserGreet />
-            <div className="mt-4">
-                <div>
-                    <p className="text-2xl font-bold">Add Income/Expense</p>
-                </div>
+
+            <div className="mt-8">
+                <h1 className="text-3xl font-extrabold text-gray-800 mb-6">
+                    Add Income / Expense
+                </h1>
+
                 <form
-                    className="flex flex-col gap-5 mt-6 items-center bg-slate-900 rounded-xl py-10"
+                    className="flex flex-col gap-6 items-center bg-gray-900 rounded-2xl p-10 shadow-lg"
                     onSubmit={handleSubmit(onSubmit)}
                 >
-                    <div className="w-2/3">
+                    {/* Amount Input */}
+                    <div className="w-full sm:w-2/3">
                         <input
-                            className={` border-1  w-full px-4 py-1 rounded-md ${
+                            className={`w-full px-5 py-3 rounded-lg  font-semibold focus:outline-none focus:ring-2 text-white ${
                                 errors.amt
-                                    ? "border-red-500/40"
-                                    : "border-gray-50/40"
+                                    ? "border-2 border-red-400"
+                                    : "border-2 border-gray-300"
                             }`}
                             type="number"
                             step={0.01}
@@ -50,45 +52,48 @@ const AddExpense = () => {
                             {...register("amt", {
                                 required: {
                                     value: true,
-                                    message: "Amt cant be null",
+                                    message: "Amount can't be empty",
                                 },
                             })}
                         />
-                        <p className="text-sm text-red-500/40">
+                        <p className="text-xs mt-1 text-red-400">
                             {errors.amt && errors.amt.message}
                         </p>
                     </div>
-                    <div className="w-2/3">
+
+                    {/* Category Input */}
+                    <div className="w-full sm:w-2/3">
                         <input
-                            className={` border-1  w-full px-4 py-1 rounded-md ${
-                                errors.amt
-                                    ? "border-red-500/40"
-                                    : "border-gray-50/40"
+                            className={`w-full px-5 py-3 rounded-lg text-white font-semibold focus:outline-none focus:ring-2 ${
+                                errors.category
+                                    ? "border-2 border-red-400"
+                                    : "border-2 border-gray-300"
                             }`}
                             type="text"
                             placeholder="Enter the category"
                             {...register("category", {
                                 required: {
                                     value: true,
-                                    message: "Category cant be null",
+                                    message: "Category can't be empty",
                                 },
                                 minLength: {
                                     value: 3,
-                                    message:
-                                        "Category must be atleast 3 characters long",
+                                    message: "Category must be at least 3 characters",
                                 },
                             })}
                         />
-                        <p className="text-sm text-red-500/40">
+                        <p className="text-xs mt-1 text-red-400">
                             {errors.category && errors.category.message}
                         </p>
                     </div>
-                    <div className="py-1 px-3 w-1/2">
+
+                    {/* Expense Type Select */}
+                    <div className="w-full sm:w-2/3">
                         <select
-                            className={`bg-white text-black font-bold border-2 w-full py-1 rounded-md ${
+                            className={`w-full px-5 py-3 rounded-lg font-semibold text-gray-700 bg-white focus:outline-none focus:ring-2 ${
                                 errors.expenseType
-                                    ? "border-red-500/40"
-                                    : "border-gray-50/40"
+                                    ? "border-2 border-red-400"
+                                    : "border-2 border-gray-300"
                             }`}
                             {...register("expenseType", {
                                 required: {
@@ -97,19 +102,23 @@ const AddExpense = () => {
                                 },
                             })}
                         >
-                            <option value=""></option>
+                            <option value="">Select Income/Expense</option>
                             <option value="INCOME">Income</option>
                             <option value="EXPENSE">Expense</option>
                         </select>
+                        <p className="text-xs mt-1 text-red-400">
+                            {errors.expenseType && errors.expenseType.message}
+                        </p>
                     </div>
-                    <input
-                        className="cursor-pointer bg-blue-400 w-fit py-2 px-5 font-bold text-black rounded-full "
+
+                    {/* Submit Button */}
+                    <button
                         type="submit"
+                        className="mt-4 bg-blue-500 hover:bg-blue-600 transition-all text-white font-bold py-3 px-8 rounded-full shadow-md disabled:bg-blue-300"
                         disabled={isSubmitting}
-                        value={
-                            isSubmitting ? "Adding please wait" : "Add expense"
-                        }
-                    />
+                    >
+                        {isSubmitting ? "Adding... Please wait" : "Add Expense"}
+                    </button>
                 </form>
             </div>
         </div>

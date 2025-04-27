@@ -1,49 +1,69 @@
-import React, { useCallback, useContext } from "react";
+import React, { useContext } from "react";
 import { FaTrash } from "react-icons/fa";
-import privateAxios from "../axios/PrivateAxios";
 import { StatsProvider } from "../context/StatsContext";
 
-const IndiTrasaction = ({ data }) => {
+const IndiTrasaction = ({ data, expanded, setExpanded }) => {
     const isExpense = data.expenseType === "EXPENSE";
 
     const { onDelete } = useContext(StatsProvider);
 
-    const handleClick = () => {
-        console.log(data.id);
+    const handleDelete = (e) => {
+        e.stopPropagation();
         onDelete(data.id);
     };
+    const handleClick = (e) => {
+        e.stopPropagation();
+        console.log(data.id);
+        setExpanded(expanded == data.id ? -1 : data.id);
+    };
+
     return (
         <div
-            className={`flex items-center justify-between gap-4 py-3 px-5 rounded-lg shadow-sm border border-gray-300 ${
-                isExpense ? "bg-red-100" : "bg-green-100"
-            }`}
+            className={`flex flex-col gap-3 py-4 px-6  rounded-2xl shadow-md border ${
+                isExpense
+                    ? "bg-red-50 border-red-200"
+                    : "bg-green-50 border-green-200"
+            } hover:shadow-lg cursor-pointer  transition-all`}
+            onClick={handleClick}
         >
-            <div className="w-[80px] text-right font-semibold text-gray-800">
-                ₹{data.amt}
-            </div>
-            <div className="w-[90px]">
-                <span
-                    className={`block text-center px-2 py-1 rounded-full text-xs font-medium ${
-                        isExpense
-                            ? "bg-red-500 text-white"
-                            : "bg-green-500 text-white"
-                    }`}
-                >
-                    {data.expenseType}
-                </span>
-            </div>
-            <div className="w-[120px] text-sm text-gray-700 capitalize text-center">
-                {data.category}
-            </div>
-            <div className=" flex items-center gap-4 text-sm text-gray-500 text-right">
-                <div
-                    className="h-8 w-8 bg-gray-500/30 hover:bg-gray-500/60 cursor-pointer rounded-full flex items-center justify-center"
-                    onClick={handleClick}
-                >
-                    <FaTrash className="text-red-400" />
+            <div className={`flex items-center justify-between gap-6 `}>
+                <div className="w-[90px] text-right font-bold text-gray-800 text-lg">
+                    ₹{data.amt}
                 </div>
-                {formatDate(data.dateTime)}
+
+                <div className="w-[100px]">
+                    <span
+                        className={`block text-center px-3 py-1 rounded-full text-xs font-semibold ${
+                            isExpense
+                                ? "bg-red-500/90 text-white"
+                                : "bg-green-500/90 text-white"
+                        }`}
+                    >
+                        {data.expenseType}
+                    </span>
+                </div>
+
+                <div className="w-[140px] text-sm text-gray-700 capitalize text-center font-medium">
+                    {data.category}
+                </div>
+
+                <div className="flex items-center gap-4 text-sm text-gray-600">
+                    {/* Delete Button */}
+                    <div
+                        className="h-9 w-9 bg-gray-400/20 hover:bg-gray-500/30 cursor-pointer rounded-full flex items-center justify-center transition-colors"
+                        onClick={handleDelete}
+                    >
+                        <FaTrash className="text-red-500" />
+                    </div>
+
+                    <div className="text-xs">{formatDate(data.dateTime)}</div>
+                </div>
             </div>
+            {expanded === data.id && (
+                <div className="bg-white text-black font-medium text-md px-6 py-4 rounded-md transition-all duration-150">
+                    {data.description}
+                </div>
+            )}
         </div>
     );
 };

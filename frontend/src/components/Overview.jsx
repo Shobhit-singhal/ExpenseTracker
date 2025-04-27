@@ -20,9 +20,6 @@ const Overview = () => {
     useEffect(() => {
         fetchDataFromDate(start, end);
     }, []);
-    // useEffect(() => {
-    //     console.log(incomeDataFromDate, " ", expenseDataFromDate);
-    // }, [incomeDataFromDate, expenseDataFromDate]);
 
     return (
         <div className="max-w-[900px] px-4 mx-auto mt-5">
@@ -65,18 +62,18 @@ const Overview = () => {
                         <>
                             <OverviewCard
                                 title="Income"
-                                amt={incomeDataFromDate.data.total}
+                                amt={incomeDataFromDate.data.total.toFixed(2)}
                             />
                             <OverviewCard
                                 title="Expense"
-                                amt={expenseDataFromDate.data.total}
+                                amt={expenseDataFromDate.data.total.toFixed(2)}
                             />
                             <OverviewCard
                                 title="Saved"
-                                amt={
+                                amt={(
                                     incomeDataFromDate.data.total -
                                     expenseDataFromDate.data.total
-                                }
+                                ).toFixed(2)}
                             />
                         </>
                     )}

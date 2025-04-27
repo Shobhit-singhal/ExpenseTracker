@@ -3,10 +3,9 @@ import { StatsProvider } from "../context/StatsContext";
 import IndiTrasaction from "./IndiTrasaction";
 
 const AllTransactions = () => {
-    const { getAllTransaction, allTransactionData, } = useContext(StatsProvider);
+    const { getAllTransaction, allTransactionData } = useContext(StatsProvider);
 
-    const [expenseTotal, setExpenseTotal] = useState(0);
-    const [incomeTotal, setIncomeTotal] = useState(0);
+    const [expanded, setExpanded] = useState(-1);
     const [income, setIncome] = useState([]);
     const [expense, setExpense] = useState([]);
     const [all, setAll] = useState([]);
@@ -123,7 +122,12 @@ const AllTransactions = () => {
 
             <div className="flex flex-col gap-1 mt-4 px-2">
                 {selectedArr().map((el) => (
-                    <IndiTrasaction key={el.id} data={el} />
+                    <IndiTrasaction
+                        key={el.id}
+                        data={el}
+                        expanded={expanded}
+                        setExpanded={setExpanded}
+                    />
                 ))}
             </div>
         </div>
