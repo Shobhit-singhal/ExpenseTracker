@@ -29,6 +29,7 @@ public class Expense {
     private LocalDateTime dateTime;
     @Enumerated(EnumType.STRING)
     private ExpenseType expenseType;
+    private String description;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)

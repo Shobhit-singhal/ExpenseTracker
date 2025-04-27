@@ -24,4 +24,5 @@ public class ExpenseResDTO {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime dateTime;
     private ExpenseType expenseType;
+    private String description;
 }

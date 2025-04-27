@@ -25,5 +25,5 @@ public class ExpenseReqDTO {
     private String category;
     @NotNull(message = "Expense type is required")
     private ExpenseType expenseType;
-
+    private String description;
 }

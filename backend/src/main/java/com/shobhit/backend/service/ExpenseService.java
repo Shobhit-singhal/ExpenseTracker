@@ -34,6 +34,7 @@ public class ExpenseService {
                 .expenseType(expense.getExpenseType())
                 .dateTime(expense.getDateTime())
                 .amt(expense.getAmt())
+                .description(expense.getDescription())
                 .build();
     }
     public Expense convToExpense(ExpenseReqDTO expenseReqDTO){
@@ -41,6 +42,7 @@ public class ExpenseService {
                 .expenseType(expenseReqDTO.getExpenseType())
                 .category(expenseReqDTO.getCategory())
                 .amt(expenseReqDTO.getAmt())
+                .description(expenseReqDTO.getDescription())
                 .build();
     }
     public FilterExpenseResDTO getALlExpense(String name,
@@ -109,9 +111,7 @@ public class ExpenseService {
 
     public ExpenseResDTO updateExpense(String name, long id, @Valid ExpenseReqDTO expenseReqDTO) {
         Expense expense=getExpenseWithProof(name,id);
-        expense.setAmt(expenseReqDTO.getAmt());
-        expense.setCategory(expenseReqDTO.getCategory());
-        expense.setExpenseType(expenseReqDTO.getExpenseType());
+        expense=convToExpense(expenseReqDTO);
         Expense saved = expenseRepo.save(expense);
         return convExpense(saved);
     }
@@ -127,18 +127,18 @@ public class ExpenseService {
     }
     private String getMonthName(int month) {
         return switch (month) {
-            case 1 -> "January";
-            case 2 -> "February";
-            case 3 -> "March";
-            case 4 -> "April";
+            case 1 -> "Jan";
+            case 2 -> "Feb";
+            case 3 -> "Mar";
+            case 4 -> "Apr";
             case 5 -> "May";
-            case 6 -> "June";
-            case 7 -> "July";
-            case 8 -> "August";
-            case 9 -> "September";
-            case 10 -> "October";
-            case 11 -> "November";
-            case 12 -> "December";
+            case 6 -> "Jun";
+            case 7 -> "Jul";
+            case 8 -> "Aug";
+            case 9 -> "Sep";
+            case 10 -> "Oct";
+            case 11 -> "Nov";
+            case 12 -> "Dec";
             default -> "";
         };
     }

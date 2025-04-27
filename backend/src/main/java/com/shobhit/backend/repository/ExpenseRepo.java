@@ -33,18 +33,7 @@ public interface ExpenseRepo extends JpaRepository<Expense,Long> {
             , @Param("start")LocalDateTime start
             ,@Param("end") LocalDateTime end);
 
-//    @Query("""
-//            select sum(e.amt) from Expense e
-//            where e.user.username=:name
-//            AND YEAR(e.dateTime)=:year
-//            AND MONTH(e.dateTime)=:month
-//            AND e.expenseType=:type
-//            """)
-//    public Double totalByMonth(
-//            @Param("name") String name,
-//            @Param("year") int year,
-//            @Param("month")int month,
-//            @Param("type")ExpenseType type);
+
 
     @Query ("""
             select COALESCE(SUM(e.amt), 0.0) from Expense e
