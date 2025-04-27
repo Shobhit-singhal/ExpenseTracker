@@ -111,7 +111,10 @@ public class ExpenseService {
 
     public ExpenseResDTO updateExpense(String name, long id, @Valid ExpenseReqDTO expenseReqDTO) {
         Expense expense=getExpenseWithProof(name,id);
-        expense=convToExpense(expenseReqDTO);
+        expense.setAmt(expenseReqDTO.getAmt());
+        expense.setCategory(expenseReqDTO.getCategory());
+        expense.setExpenseType(expenseReqDTO.getExpenseType());
+        expense.setDescription(expenseReqDTO.getDescription());
         Expense saved = expenseRepo.save(expense);
         return convExpense(saved);
     }
