@@ -137,7 +137,7 @@ const StatsContext = ({ children }) => {
     const registerAcc = async (details) => {
         setRegisterData({ loading: true, data: null, error: null });
         try {
-            let req = await publicAxios.post("/public/register", details);
+            let res = await publicAxios.post("/public/register", details);
             setRegisterData({ loading: false, data: res.data, error: null });
         } catch (err) {
             setRegisterData({
@@ -274,6 +274,47 @@ const StatsContext = ({ children }) => {
             });
         }
     };
+    const [expenseById, setExpenseById] = useState({
+        loading: false,
+        data: null,
+        error: null,
+    });
+    const getExpenseById = async (id) => {
+        setExpenseById({ loading: true, data: null, error: null });
+        try {
+            let res = await privateAxios.get(`/expense/${id}`);
+            setExpenseById({ loading: false, data: res.data, error: null });
+        } catch (err) {
+            setExpenseById({
+                loading: false,
+                data: null,
+                error: err.message || "Something went wrong",
+            });
+        }
+    };
+    const [updateExpenseData, setUpdateExpenseData] = useState({
+        loading: false,
+        data: null,
+        error: null,
+    });
+    const updateExpense = async (id, updatedDetails) => {
+        setUpdateExpenseData({ loading: true, data: null, error: null });
+        try {
+            let res = await privateAxios.put(`/expense/${id}`, updatedDetails);
+            setUpdateExpenseData({
+                loading: false,
+                data: res.data,
+                error: null,
+            });
+        } catch (err) {
+            setUpdateExpenseData({
+                loading: false,
+                data: null,
+                error: err.message || "Something went wrong",
+            });
+        }
+    };
+
     return (
         <StatsProvider.Provider
             value={{
@@ -288,6 +329,8 @@ const StatsContext = ({ children }) => {
                 expensePieChartData,
                 allTransactionData,
                 logoutData,
+                expenseById,
+                updateExpenseData,
                 addExpense,
                 fetchGraphData,
                 login,
@@ -297,6 +340,8 @@ const StatsContext = ({ children }) => {
                 getAllTransaction,
                 logOut,
                 onDelete,
+                getExpenseById,
+                updateExpense,
             }}
         >
             {children}

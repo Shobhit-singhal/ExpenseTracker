@@ -9,6 +9,7 @@ import { Route, Routes } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import Register from "./pages/Register";
 import Transaction from "./pages/Transaction";
+import UpdateExpense from "./pages/UpdateExpense";
 
 const App = () => {
     return (
@@ -19,6 +20,7 @@ const App = () => {
                 <Route path="/login" element={<LoginPage />}></Route>
                 <Route path="/register" element={<Register />}></Route>
                 <Route path="/transaction" element={<Transaction />}></Route>
+                <Route path="/update/:id" element={<UpdateExpense />}></Route>
             </Routes>
         </div>
     );

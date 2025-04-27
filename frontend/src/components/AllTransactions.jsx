@@ -14,11 +14,6 @@ const AllTransactions = () => {
     const [sortBy, setSortBy] = useState("date"); // date | category | amount
     const [sortOrder, setSortOrder] = useState("desc"); // asc | desc
 
-    // const onDelete = async (id) => {
-    //     let res = await handleDelete(id);
-    //     fetchData();
-    //     console.log(res);
-    // };
 
     useEffect(() => {
         if (allTransactionData.data) {

@@ -1,11 +1,14 @@
 import React, { useContext } from "react";
 import { FaTrash } from "react-icons/fa";
 import { StatsProvider } from "../context/StatsContext";
+import { FaPen } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const IndiTrasaction = ({ data, expanded, setExpanded }) => {
     const isExpense = data.expenseType === "EXPENSE";
 
     const { onDelete } = useContext(StatsProvider);
+    const navigate = useNavigate();
 
     const handleDelete = (e) => {
         e.stopPropagation();
@@ -13,8 +16,11 @@ const IndiTrasaction = ({ data, expanded, setExpanded }) => {
     };
     const handleClick = (e) => {
         e.stopPropagation();
-        console.log(data.id);
         setExpanded(expanded == data.id ? -1 : data.id);
+    };
+    const handleUpdate = (e) => {
+        e.stopPropagation();
+        navigate(`/update/${data.id}`);
     };
 
     return (
@@ -55,11 +61,17 @@ const IndiTrasaction = ({ data, expanded, setExpanded }) => {
                     >
                         <FaTrash className="text-red-500" />
                     </div>
+                    <div
+                        className="h-9 w-9 bg-gray-400/20 hover:bg-gray-500/30 cursor-pointer rounded-full flex items-center justify-center transition-colors"
+                        onClick={handleUpdate}
+                    >
+                        <FaPen className="text-blue-600" />
+                    </div>
 
                     <div className="text-xs">{formatDate(data.dateTime)}</div>
                 </div>
             </div>
-            {expanded === data.id && (
+            {expanded === data.id && data.description && (
                 <div className="bg-white text-black font-medium text-md px-6 py-4 rounded-md transition-all duration-150">
                     {data.description}
                 </div>
