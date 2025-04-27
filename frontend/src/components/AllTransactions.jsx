@@ -3,8 +3,7 @@ import { StatsProvider } from "../context/StatsContext";
 import IndiTrasaction from "./IndiTrasaction";
 
 const AllTransactions = () => {
-    const { getPieChartData, getAllTransaction, handleDelete } =
-        useContext(StatsProvider);
+    const { getAllTransaction, allTransactionData } = useContext(StatsProvider);
 
     const [expenseTotal, setExpenseTotal] = useState(0);
     const [incomeTotal, setIncomeTotal] = useState(0);
@@ -16,24 +15,31 @@ const AllTransactions = () => {
     const [sortBy, setSortBy] = useState("date"); // date | category | amount
     const [sortOrder, setSortOrder] = useState("desc"); // asc | desc
 
-    const onDelete = async (id) => {
-        let res = await handleDelete(id);
-        fetchData();
-        console.log(res);
-    };
+    // const onDelete = async (id) => {
+    //     let res = await handleDelete(id);
+    //     fetchData();
+    //     console.log(res);
+    // };
 
-    const fetchData = async () => {
-        const res = await getPieChartData();
-        const data = await getAllTransaction();
-
-        setIncomeTotal(res.income.total);
-        setExpenseTotal(res.expense.total);
-        setIncome(res.income.expenses);
-        setExpense(res.expense.expenses);
-        setAll(data.expenses);
-    };
     useEffect(() => {
-        fetchData();
+        if (allTransactionData.data) {
+            setAll(allTransactionData.data.expenses);
+            setIncome(
+                allTransactionData.data.expenses.filter(
+                    (expense) => expense.expenseType == "INCOME"
+                )
+            );
+            setExpense(
+                allTransactionData.data.expenses.filter(
+                    (expense) => expense.expenseType == "EXPENSE"
+                )
+            );
+            console.log(allTransactionData.data);
+        }
+    }, [allTransactionData]);
+
+    useEffect(() => {
+        getAllTransaction();
     }, []);
 
     const selectedArr = () => {
@@ -117,7 +123,7 @@ const AllTransactions = () => {
 
             <div className="flex flex-col gap-1 mt-4 px-2">
                 {selectedArr().map((el) => (
-                    <IndiTrasaction key={el.id} data={el} onDelete={onDelete} />
+                    <IndiTrasaction key={el.id} data={el} />
                 ))}
             </div>
         </div>
